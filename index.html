@@ -1,1 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year</title>
 
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #f7cfdc, #cfe7f7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Splash */
+.splash {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #ffffff, #f2f2f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: splashOut 1s ease forwards;
+  animation-delay: 2.2s;
+}
+
+.splash-text {
+  font-size: 32px;
+  font-weight: 600;
+}
+
+@keyframes splashOut {
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+    pointer-events: none;
+  }
+}
+
+/* Card */
+.card {
+  width: 320px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  z-index: 2;
+  opacity: 0;
+  animation: showMain 0.8s ease forwards;
+  animation-delay: 2.4s;
+}
+
+@keyframes showMain {
+  to { opacity: 1; }
+}
+
+.title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f48fb1;
+}
+
+.time {
+  font-size: 42px;
+  text-align: center;
+  color: #5a4b81;
+  font-weight: 600;
+}
+
+.date {
+  text-align: center;
+  color: #777;
+  margin-bottom: 16px;
+}
+
+.chat {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.bubble {
+  background: #fff1f5;
+  border-radius: 16px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.next-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f8a1c4, #9fd3ff);
+  color: white;
+  cursor: pointer;
+}
+
+/* Gift */
+.gift-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.4s;
+  z-index: 5;
+}
+
+.gift-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gift-box {
+  font-size: 120px;
+}
+
+/* Popup */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 10;
+}
+
+.popup.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup-content {
+  width: 280px;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+}
+
+.popup-content button {
+  border: none;
+  background: #f8a1c4;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+/* Hearts */
+.heart {
+  position: fixed;
+  bottom: -20px;
+  animation: floatUp 4s linear forwards;
+}
+
+@keyframes floatUp {
+  to {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="splash">
+  <div class="splash-text">to you</div>
+</div>
+
+<div class="card">
+  <div class="title">🎉 Happy New Year 🎉</div>
+  <div class="time">00:00</div>
+  <div class="date">1 มกราคม 2569</div>
+
+  <div class="chat" id="chat"></div>
+  <button class="next-btn" id="nextBtn">อ่านต่อ</button>
+</div>
+
+<div class="gift-overlay" id="giftOverlay">
+  <div class="gift-box">🎁</div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h3>อ่ออออ แล้วก็</h3>
+    <p id="typingText"></p>
+    <button onclick="goToSong()">💖</button>
+  </div>
+</div>
+
+<script>
+const messages = [
+  "ขอให้มีความสุขมากๆ",
+  "ขอให้สมหวังทุกอย่าง",
+  "เป็นปีที่รอยยิ้มเปื้อนหน้า",
+  "รักตัวเองมากๆ",
+  "เป็นปีที่ดีไม่มีเรื่องให้ทุกข์ใจเลยนะ"
+];
+
+let index = 0;
+const chat = document.getElementById("chat");
+const btn = document.getElementById("nextBtn");
+const giftOverlay = document.getElementById("giftOverlay");
+const popup = document.getElementById("popup");
+const typingText = document.getElementById("typingText");
+
+btn.onclick = () => {
+  if (index < messages.length) {
+    const d = document.createElement("div");
+    d.className = "bubble";
+    d.textContent = messages[index++];
+    chat.appendChild(d);
+    if (index === messages.length) btn.textContent = "เปิดของขวัญ 🎁";
+  } else {
+    giftOverlay.classList.add("show");
+    setTimeout(() => {
+      giftOverlay.classList.remove("show");
+      popup.classList.add("show");
+      typeText("อย่าลืมพักผ่อนเยอะๆด้วยนะคุณพยาบาลตัวน้อยย 🤏🏻💐😪");
+    }, 1200);
+  }
+};
+
+function typeText(text) {
+  let i = 0;
+  typingText.textContent = "";
+  const t = setInterval(() => {
+    typingText.textContent += text[i++];
+    if (i >= text.length) {
+      clearInterval(t);
+      setInterval(spawnHeart, 300);
+    }
+  }, 50);
+}
+
+function spawnHeart() {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.textContent = "💗";
+  h.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 4000);
+}
+
+/* 👉 Spotify link อยู่ตรงนี้ */
+  function goToSong() {
+  // พยายามเปิด Spotify App ก่อน
+  window.location.href = "spotify:track:7fgsuApcXhqLilH1sXtk3Q?si=P5ldWuTuTQ2lRJJalGtMsQ";
+
+  // ถ้าไม่มีแอป ให้ fallback ไป Spotify Web
+  setTimeout(() => {
+    window.location.href =
+      "https://open.spotify.com/track/7fgsuApcXhqLilH1sXtk3Q?si=P5ldWuTuTQ2lRJJalGtMsQ";
+  }, 800);
+}
+</script>
+
+</body>
+</html>
